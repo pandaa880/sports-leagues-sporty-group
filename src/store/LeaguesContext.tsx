@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { ReactNode } from 'react';
+
 import type { League } from '../types/sportsService';
 import { sportsService } from '../services/api/sportsService';
 

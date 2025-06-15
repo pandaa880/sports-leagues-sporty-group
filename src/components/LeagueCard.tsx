@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import type { League } from '../../types/sportsService';
-import { useSeasonContext } from '../../store/SeasonContext';
+import type { League } from '../types/sportsService';
+
+import { useSeasonContext } from '../store/SeasonContext';
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function LeagueCard({ league }: { league: League }) {
-  const { fetchSeasonBadge, getBadgeStatus } = useSeasonContext();
+  const { fetchSeasonBadge, toggleBadge, getBadgeStatus } = useSeasonContext();
   const { badgeUrl, loading, error } = getBadgeStatus(league.idLeague);
 
-  const [showBadge, setShowBadge] = useState(false);
-
   const handleCardClick = () => {
-    fetchSeasonBadge(league.idLeague);
-    setShowBadge((prev) => !prev);
+    // If we already have the badge data, just toggle it
+    // Otherwise fetch it first
+    if (badgeUrl || error) {
+      toggleBadge(league.idLeague);
+    } else {
+      fetchSeasonBadge(league.idLeague);
+    }
   };
 
   return (
@@ -19,18 +23,16 @@ export function LeagueCard({ league }: { league: League }) {
       className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
-      {showBadge ? (
+      {badgeUrl ? (
         <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
           {loading && <p className="text-sm text-gray-500">Loading season badge...</p>}
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          {badgeUrl ? (
-            <img
-              src={badgeUrl}
-              alt={`${league.strLeague} badge`}
-              className="max-h-full max-w-full object-contain"
-            />
-          ) : null}
+          <img
+            src={badgeUrl}
+            alt={`${league.strLeague} badge`}
+            className="max-h-full max-w-full object-contain"
+          />
         </CardHeader>
       ) : (
         <CardContent className="p-4 h-30">

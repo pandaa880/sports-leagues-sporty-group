@@ -1,7 +1,11 @@
 import { useEffect, useMemo } from 'react';
-import { useLeaguesContext } from '../store/LeaguesContext';
-import { LeagueCard } from './league-card/LeagueCard';
+
 import type { League } from '../types/sportsService';
+
+import { useLeaguesContext } from '../store/LeaguesContext';
+
+import { Button } from './ui/button';
+import { LeagueCard } from './LeagueCard';
 
 export const LeaguesList = () => {
   const { state, fetchLeagues, getFilteredLeagues } = useLeaguesContext();
@@ -33,12 +37,12 @@ export const LeaguesList = () => {
       >
         <p className="font-medium">Error loading leagues</p>
         <p className="text-sm">{error.message}</p>
-        <button
+        <Button
           onClick={() => fetchLeagues()}
           className="mt-2 px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200"
         >
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

@@ -1,3 +1,5 @@
+import { useLeaguesContext } from '../store/LeaguesContext';
+
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -7,11 +9,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { H1, P } from '@/components/ui/typography';
-import { LeaguesList } from '../components/LeaguesList';
-import { useLeaguesContext } from '../store/LeaguesContext';
 import { Button } from '@/components/ui/button';
-
-import { clearAllCaches } from '../utils/cacheUtils';
+import { LeaguesList } from '../components/LeaguesList';
+import { clearAllCaches } from '../lib/utils';
 
 export const LeaguesPage = () => {
   const { state, dispatch, getSportTypes } = useLeaguesContext();

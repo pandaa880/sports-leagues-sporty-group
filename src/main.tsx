@@ -6,7 +6,7 @@ import './index.css';
 import './styles/fonts.css';
 
 import App from './App.tsx';
-import { registerServiceWorker } from './utils/serviceWorkerRegistration';
+import { registerServiceWorker } from './lib/serviceWorkerRegistration';
 
 // Register service worker for caching
 registerServiceWorker();
