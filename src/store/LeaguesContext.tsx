@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import type { League } from '../types/sportsService';
 import { sportsService } from '../services/api/sportsService';
@@ -48,6 +48,7 @@ interface LeaguesContextType {
   dispatch: React.Dispatch<LeaguesAction>;
   fetchLeagues: () => Promise<void>;
   getFilteredLeagues: () => League[];
+  getSportTypes: () => string[];
 }
 
 const LeaguesContext = createContext<LeaguesContextType | undefined>(undefined);
@@ -55,7 +56,8 @@ const LeaguesContext = createContext<LeaguesContextType | undefined>(undefined);
 export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(leaguesReducer, initialState);
 
-  const fetchLeagues = async () => {
+  // Memoize fetchLeagues to prevent infinite API calls
+  const fetchLeagues = useCallback(async () => {
     dispatch({ type: 'FETCH_START' });
     try {
       const response = await sportsService.getAllLeagues();
@@ -66,9 +68,10 @@ export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children })
         payload: err instanceof Error ? err : new Error('Failed to fetch leagues') 
       });
     }
-  };
+  }, []);
 
-  const getFilteredLeagues = () => {
+  // Memoize getFilteredLeagues to prevent infinite updates
+  const getFilteredLeagues = useCallback(() => {
     let filtered = [...state.leagues];
     
     if (state.selectedSport !== 'all') {
@@ -84,14 +87,20 @@ export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
     
     return filtered;
-  };
+  }, [state.leagues, state.selectedSport, state.searchTerm]);
+
+  // Memoize getSportTypes to prevent infinite updates
+  const getSportTypes = useCallback(() => {
+    return [...new Set(state.leagues.map((league: League) => league.strSport))];
+  }, [state.leagues]);
 
   return (
     <LeaguesContext.Provider value={{ 
       state, 
       dispatch, 
       fetchLeagues, 
-      getFilteredLeagues
+      getFilteredLeagues,
+      getSportTypes
     }}>
       {children}
     </LeaguesContext.Provider>

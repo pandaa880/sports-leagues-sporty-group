@@ -1,97 +1,58 @@
-import { useMemo, useEffect } from 'react';
-
+import { useEffect, useMemo } from 'react';
 import { useLeaguesContext } from '../store/LeaguesContext';
-import { useDebounce } from '../hooks/useDebounce';
-
-import { Dropdown, type DropdownOption } from './ui/dropdown';
-
-import type { League } from '../types/sportsService'
-
-import './LeaguesList.css';
 import { LeagueCard } from './league-card/LeagueCard';
-
-const getDropdownOptions = (leagues: League[]): DropdownOption[] => {
-  const uniqueSports = Array.from(new Set(leagues.map(league => league.strSport)));
-  
-  return [
-    { value: 'all', label: 'All Sports' },
-    ...uniqueSports.map(sport => ({
-      value: sport,
-      label: sport,
-    })),
-  ];
-}
+import type { League } from '../types/sportsService';
 
 export const LeaguesList = () => {
-    const { state, dispatch, fetchLeagues, getFilteredLeagues } = useLeaguesContext();
-    const { leagues, loading, error, searchTerm, selectedSport } = state;
-    
-    const debouncedSearchTerm = useDebounce(searchTerm, 300);
-    
+    const { state, fetchLeagues, getFilteredLeagues } = useLeaguesContext();
+    const { loading, error } = state;
+
     useEffect(() => {
         fetchLeagues();
-    }, []);
-    
-    const handleSearchChange = (value: string) => {
-        dispatch({ type: 'SET_SEARCH_TERM', payload: value });
-    };
-    
-    const handleSportChange = (value: string) => {
-        dispatch({ type: 'SET_SELECTED_SPORT', payload: value });
-        dispatch({ type: 'SET_SEARCH_TERM', payload: '' });
-    };
-    
+    }, [fetchLeagues]);
+
+    // Get filtered leagues from context using useMemo to prevent infinite updates
     const filteredLeagues = useMemo(() => {
+        if (loading || error) return [];
         return getFilteredLeagues();
-    }, [leagues, selectedSport, debouncedSearchTerm]);
-
-
-    const sportOptions = useMemo(() => getDropdownOptions(leagues), [leagues]);
-
+    }, [getFilteredLeagues, loading, error]);
 
     if (loading) {
-        return <div className="loading">Loading leagues...</div>;
+        return (
+            <div className="flex justify-center items-center p-8 w-full h-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
     }
 
     if (error) {
         return (
-            <div className="error">
-                <p>Error loading leagues: {error.message}</p>
-                <button onClick={fetchLeagues}>Try Again</button>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <p className="font-medium">Error loading leagues</p>
+                <p className="text-sm">{error.message}</p>
+                <button 
+                    onClick={() => fetchLeagues()}
+                    className="mt-2 px-3 py-1 bg-red-100 text-red-800 rounded hover:bg-red-200"
+                >
+                    Retry
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="leagues-container">
-            <h2>Sports Leagues</h2>
-            <div className="search-container">
-                <input
-                    type="text"
-                    placeholder="Search leagues..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    className="search-input"
-                />
-            </div>
-            <div>
-                <Dropdown
-                    options={sportOptions}
-                    value={selectedSport}
-                    onChange={handleSportChange}
-                    placeholder="Filter by sport"
-                    className="sport-dropdown"
-                />
-            </div>
-            <div className="leagues-grid">
-                {filteredLeagues.length > 0 ? (
-                    filteredLeagues.map((league) => (
+        <div>
+            {filteredLeagues.length === 0 ? (
+                <div className="text-center p-8">
+                    <p className="text-gray-500">No leagues found matching your criteria</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    {filteredLeagues.map((league: League) => (
                         <LeagueCard key={league.idLeague} league={league} />
-                    ))
-                ) : (
-                    <p className="no-results">No leagues found matching "{searchTerm}"</p>
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

@@ -1,0 +1,16 @@
+/* Import the font files */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
+/* Define the CSS variables for the fonts */
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-poppins: 'Poppins', system-ui, sans-serif;
+}
