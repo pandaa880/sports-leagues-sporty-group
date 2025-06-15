@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { sportsService } from '../services/api/sportsService';
+import { useImageCache } from './useImageCache';
 
 export function useSeasonBadge(leagueId: string) {
-  const [seasonBadge, setSeasonBadge] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [badgeUrl, setBadgeUrl] = useState<string | null>(null);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  
+  // Use the image cache hook for the badge URL
+  const { imageSrc: seasonBadge, loading: imageLoading, error: imageError } = useImageCache(badgeUrl);
+  
+  // Combined loading and error states
+  const loading = fetchLoading || imageLoading;
+  const error = fetchError || imageError;
 
   const fetchSeasonBadge = async () => {
-    if (seasonBadge) {
-      setSeasonBadge(null);
+    if (badgeUrl) {
+      setBadgeUrl(null);
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setFetchLoading(true);
+    setFetchError(null);
     
     try {
       const data = await sportsService.getLeagueSeasons(leagueId);
@@ -21,17 +29,17 @@ export function useSeasonBadge(leagueId: string) {
       if (data.seasons && data.seasons.length > 0) {
         const seasonWithBadge = data.seasons.find(season => season.strBadge);
         if (seasonWithBadge) {
-          setSeasonBadge(seasonWithBadge.strBadge);
+          setBadgeUrl(seasonWithBadge.strBadge);
         } else {
-          setError("No season badge found");
+          setFetchError("No season badge found");
         }
       } else {
-        setError("No seasons found");
+        setFetchError("No seasons found");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setFetchError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false);
+      setFetchLoading(false);
     }
   };
 
