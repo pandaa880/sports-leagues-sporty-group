@@ -8,7 +8,7 @@ export class SportsService {
     // Use longer cache duration (1 hour) for sports data as it doesn't change frequently
     this.apiService = new CachedApiService(
       'https://www.thesportsdb.com/api/v1/json/3',
-      60, // 1 hour cache duration in seconds
+      900, // 15 minutes cache duration in seconds
       'sports-league-cache-v1'
     );
   }
