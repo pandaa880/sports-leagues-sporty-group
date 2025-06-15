@@ -9,14 +9,14 @@ export function LeagueCard({ league }: { league: League }) {
   const { badgeUrl, loading, error } = getBadgeStatus(league.idLeague);
 
   const handleCardClick = () => {
-    // If we already have the badge data, just toggle it
-    // Otherwise fetch it first
     if (badgeUrl || error) {
       toggleBadge(league.idLeague);
     } else {
       fetchSeasonBadge(league.idLeague);
     }
   };
+
+  const isLoadingBadge = loading && !badgeUrl;
 
   return (
     <Card
@@ -25,14 +25,27 @@ export function LeagueCard({ league }: { league: League }) {
     >
       {badgeUrl ? (
         <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
-          {loading && <p className="text-sm text-gray-500">Loading season badge...</p>}
           {error && <p className="text-sm text-red-500">{error}</p>}
-
-          <img
-            src={badgeUrl}
-            alt={`${league.strLeague} badge`}
-            className="max-h-full max-w-full object-contain"
-          />
+          
+          {loading ? (
+            <div className="flex flex-col items-center justify-center w-full h-24">
+              <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-2"></div>
+              <div className="w-16 h-3 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          ) : (
+            <img
+              src={badgeUrl}
+              alt={`${league.strLeague} badge`}
+              className="max-h-full max-w-full object-contain"
+            />
+          )}
+        </CardHeader>
+      ) : isLoadingBadge ? (
+        <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
+          <div className="flex flex-col items-center justify-center w-full h-24">
+            <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-2"></div>
+            <div className="w-16 h-3 bg-gray-200 rounded animate-pulse"></div>
+          </div>
         </CardHeader>
       ) : (
         <CardContent className="p-4 h-30">

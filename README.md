@@ -1,28 +1,37 @@
 # Sports Leagues Directory
 
-A React TypeScript application that displays sports leagues from around the world, with filtering and search capabilities. The app fetches data from TheSportsDB API and implements efficient state management using React Context API.
+A modern React TypeScript application that displays sports leagues from around the world, with filtering and search capabilities. The app fetches data from TheSportsDB API and implements efficient state management using React Context API with shadcn-ui components for a polished user interface.
 
 ## Features
 
 - Browse sports leagues from various categories
 - Filter leagues by sport type
 - Search leagues by name
-- View season badges for leagues
+- View season badges for leagues with toggle functionality
 - Cached API responses for improved performance
-- Responsive design
+- Responsive design with shadcn-ui components
+- Custom typography with Inter and Poppins fonts
+- Code formatting with Prettier
 
 ## Project Structure
 
 ```
 src/
 ├── components/            # UI components
-│   ├── league-card/       # League card component and styles
-│   ├── ui/                # Reusable UI components (Dropdown, etc.)
+│   ├── ui/                # shadcn-ui components
+│   │   ├── button.tsx     # Button component
+│   │   ├── card.tsx       # Card component
+│   │   ├── input.tsx      # Input component
+│   │   ├── select.tsx     # Select component
+│   │   └── typography.tsx # Typography components (H1, P)
+│   ├── LeagueCard.tsx     # League card component
 │   └── LeaguesList.tsx    # Main component for displaying leagues
 ├── hooks/                 # Custom React hooks
-│   ├── useDebounce.ts     # Hook for debouncing search input
-│   ├── useImageCache.ts   # Hook for caching images
-│   └── useLeagues.ts      # Hook for fetching leagues data
+│   └── useDebounce.ts     # Hook for debouncing search input
+├── lib/                   # Library code and utilities
+│   ├── fonts.ts           # Font configuration
+│   ├── serviceWorkerRegistration.ts # Service worker for caching
+│   └── utils.ts           # Utility functions including cache clearing
 ├── pages/                 # Page components
 │   └── LeaguesPage.tsx    # Main page for the leagues directory
 ├── services/              # API and service layer
@@ -33,11 +42,11 @@ src/
 ├── store/                 # Context-based state management
 │   ├── LeaguesContext.tsx # Context for leagues data
 │   └── SeasonContext.tsx  # Context for season badges
+├── styles/                # Style files
+│   └── fonts.css          # Font imports and variables
 ├── types/                 # TypeScript type definitions
 │   └── sportsService.ts   # Types for API responses
-├── utils/                 # Utility functions
-│   └── cacheUtils.ts      # Cache management utilities
-├── App.css                # Global styles
+├── index.css              # Global styles with Tailwind directives
 ├── App.tsx                # Root component
 └── main.tsx              # Application entry point
 ```
@@ -59,20 +68,85 @@ The application uses React's Context API with useReducer for state management, s
 
 This separation of concerns allows for better maintainability and scalability.
 
-## API Caching Strategy
+## Technologies
 
-The application implements a caching layer using the Cache Storage API to:
+### UI Components
+- **shadcn-ui**: A collection of reusable components built with Radix UI and Tailwind CSS
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
 
-- Reduce unnecessary API calls
-- Improve application performance
-- Provide offline capabilities
-- Reduce load on the external API
+### Fonts
+- **Fontsource**: Self-hosted font solution for Inter and Poppins fonts
+- **Typography Components**: Custom React components for consistent text styling
+
+### Development Tools
+- **Vite**: For fast development and optimized builds
+- **TypeScript**: For type safety and better developer experience
+- **Prettier**: For consistent code formatting
+
+### State Management
+- **React Context API**: For global state management
+- **useReducer**: For predictable state transitions
+
+### API Caching Strategy
+
+The application implements a sophisticated multi-level caching strategy using the Cache Storage API and Service Workers:
+
+#### Cache Types
+- **API Cache**: For TheSportsDB API responses with configurable TTL (Time-To-Live)
+- **Image Cache**: Separate cache for league badges and other images
+- **Static Assets Cache**: For application resources like HTML, CSS, and JavaScript
+
+#### Caching Strategies
+
+1. **API Responses (Network-First with Fallback)**
+   - First attempts to fetch fresh data from the network
+   - Stores successful responses in the cache with expiration metadata
+   - Falls back to cached data when network requests fail
+   - Configurable cache expiration (default: 15 minutes)
+
+2. **Images (Cache-First)**
+   - Checks cache first for images to improve performance
+   - Falls back to network requests if not in cache
+   - Special handling for CORS with TheSportsDB images using no-cors mode
+   - Indefinite caching for images to reduce bandwidth usage
+
+3. **Static Assets (Stale-While-Revalidate)**
+   - Returns cached version immediately if available
+   - Simultaneously updates cache in the background
+   - Ensures fast loading while keeping content fresh
+
+#### Implementation Details
+
+- Uses Service Worker for intercepting and caching network requests
+- Custom headers for cache control with timestamps
+- Cache cleanup on service worker activation
+- Manual cache clearing functionality via UI
+
+This comprehensive caching strategy provides:
+- Significantly reduced API calls
+- Improved application performance and responsiveness
+- Offline or poor-connection functionality
+- Reduced load on TheSportsDB API
+
+## Code Formatting
+
+The project uses Prettier for code formatting. You can format your code using:
+
+```bash
+npm run format
+```
+
+To check if your code is properly formatted without making changes:
+
+```bash
+npm run format:check
+```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14.0.0 or later)
+- Node.js (v20.0.0 or later)
 - npm
 
 ### Installation
@@ -142,7 +216,7 @@ npm run build
 - React 18
 - TypeScript
 - Vite
-- CSS Modules
+- Tailwind CSS
 - Cache Storage API
 - React Context API
 
@@ -152,7 +226,8 @@ This project leveraged various AI tools to enhance development efficiency:
 
 - **Google Stitch** - Used to generate UI mockups and design concepts
 - **Cascade** - 
-   - Helped with state management architecture and code organization 
+   - Helped with generating html & css for the UI from the mockup image
+   - Helped with migration of the UI component to shadcn-ui
    - Assisted with implementation of the caching layer
 
 These AI tools significantly accelerated the development process while maintaining code quality and best practices.

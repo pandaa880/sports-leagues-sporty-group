@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useLeaguesContext } from '../store/LeaguesContext';
 
 import { Input } from '@/components/ui/input';
@@ -11,14 +12,26 @@ import {
 import { H1, P } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
 import { LeaguesList } from '../components/LeaguesList';
+
+import { useDebounce } from '../hooks/useDebounce';
 import { clearAllCaches } from '../lib/utils';
 
 export const LeaguesPage = () => {
   const { state, dispatch, getSportTypes } = useLeaguesContext();
   const { searchTerm, selectedSport } = state;
-
+  
+  // Local state for input value before debouncing
+  const [inputValue, setInputValue] = useState(searchTerm);
+  
+  const debouncedSearchTerm = useDebounce(inputValue, 300);
+  
   // Get unique sport types from context
   const sportTypes = getSportTypes();
+  
+  // Update the context state when the debounced value changes
+  useEffect(() => {
+    dispatch({ type: 'SET_SEARCH_TERM', payload: debouncedSearchTerm });
+  }, [debouncedSearchTerm, dispatch]);
 
   return (
     <div className="container mx-auto py-6">
@@ -40,8 +53,8 @@ export const LeaguesPage = () => {
             <Input
               type="search"
               placeholder="Search leagues"
-              value={searchTerm}
-              onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               className="w-full pl-8"
             />
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
