@@ -3,16 +3,13 @@ const CACHE_NAME = 'sports-league-cache-v1';
 const IMAGE_CACHE_NAME = 'sports-league-images-v1';
 
 // Resources to pre-cache
-const PRE_CACHED_RESOURCES = [
-  '/',
-  '/index.html',
-  '/main.js',
-];
+const PRE_CACHED_RESOURCES = ['/', '/index.html', '/main.js'];
 
 // Install event - pre-cache important resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches
+      .open(CACHE_NAME)
       .then((cache) => {
         return cache.addAll(PRE_CACHED_RESOURCES);
       })
@@ -24,34 +21,35 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   const currentCaches = [CACHE_NAME, IMAGE_CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!currentCaches.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (!currentCaches.includes(cacheName)) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
 // Helper function to determine if a request is for an image
 function isImageRequest(request) {
   const url = new URL(request.url);
-  
+
   // Check if it's a TheSportsDB image
-  const isTheSportsDBImage = 
-    url.hostname === 'www.thesportsdb.com' && 
-    (
-      url.pathname.includes('/images/media/league/badgearchive/')
-    );
-  
+  const isTheSportsDBImage =
+    url.hostname === 'www.thesportsdb.com' &&
+    url.pathname.includes('/images/media/league/badgearchive/');
+
   return (
-    request.destination === 'image' || 
-    url.pathname.endsWith('.jpg') || 
-    url.pathname.endsWith('.jpeg') || 
-    url.pathname.endsWith('.png') || 
+    request.destination === 'image' ||
+    url.pathname.endsWith('.jpg') ||
+    url.pathname.endsWith('.jpeg') ||
+    url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.gif') ||
     url.pathname.endsWith('.svg') ||
     url.pathname.endsWith('.webp') ||
@@ -62,10 +60,7 @@ function isImageRequest(request) {
 // Helper to determine if a request is for API data
 function isApiRequest(request) {
   const url = new URL(request.url);
-  return (
-    url.hostname === 'www.thesportsdb.com' && 
-    url.pathname.includes('/api/')
-  );
+  return url.hostname === 'www.thesportsdb.com' && url.pathname.includes('/api/');
 }
 
 // Fetch event - serve from cache or network
@@ -86,22 +81,24 @@ self.addEventListener('fetch', (event) => {
           }
 
           // Otherwise fetch from network
-          
+
           // Use no-cors for TheSportsDB images to handle CORS issues
-          const fetchOptions = request.url.includes('thesportsdb.com') ? 
-            { mode: 'no-cors' } : {};
-          
-          return fetch(request, fetchOptions).then((networkResponse) => {
-            // Cache a copy of the response (both ok and opaque responses)
-            if (networkResponse.ok || networkResponse.type === 'opaque') {
-              cache.put(request, networkResponse.clone())
-                .catch(err => console.error('Failed to cache:', request.url, err));
-            }
-            
-            return networkResponse;
-          }).catch(error => {
-            return new Response('Image not available', { status: 404 });
-          });
+          const fetchOptions = request.url.includes('thesportsdb.com') ? { mode: 'no-cors' } : {};
+
+          return fetch(request, fetchOptions)
+            .then((networkResponse) => {
+              // Cache a copy of the response (both ok and opaque responses)
+              if (networkResponse.ok || networkResponse.type === 'opaque') {
+                cache
+                  .put(request, networkResponse.clone())
+                  .catch((err) => console.error('Failed to cache:', request.url, err));
+              }
+
+              return networkResponse;
+            })
+            .catch((error) => {
+              return new Response('Image not available', { status: 404 });
+            });
         });
       })
     );

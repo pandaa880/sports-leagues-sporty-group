@@ -7,7 +7,7 @@ interface SeasonState {
   errors: Record<string, string | null>;
 }
 
-type SeasonAction = 
+type SeasonAction =
   | { type: 'FETCH_BADGE_START'; payload: string }
   | { type: 'FETCH_BADGE_SUCCESS'; payload: { leagueId: string; badgeUrl: string } }
   | { type: 'FETCH_BADGE_ERROR'; payload: { leagueId: string; error: string } }
@@ -22,30 +22,32 @@ const initialState: SeasonState = {
 const seasonReducer = (state: SeasonState, action: SeasonAction): SeasonState => {
   switch (action.type) {
     case 'FETCH_BADGE_START':
-      return { 
-        ...state, 
+      return {
+        ...state,
         loading: { ...state.loading, [action.payload]: true },
-        errors: { ...state.errors, [action.payload]: null }
+        errors: { ...state.errors, [action.payload]: null },
       };
     case 'FETCH_BADGE_SUCCESS':
-      return { 
-        ...state, 
+      return {
+        ...state,
         seasonBadges: { ...state.seasonBadges, [action.payload.leagueId]: action.payload.badgeUrl },
-        loading: { ...state.loading, [action.payload.leagueId]: false }
+        loading: { ...state.loading, [action.payload.leagueId]: false },
       };
     case 'FETCH_BADGE_ERROR':
-      return { 
-        ...state, 
+      return {
+        ...state,
         loading: { ...state.loading, [action.payload.leagueId]: false },
-        errors: { ...state.errors, [action.payload.leagueId]: action.payload.error }
+        errors: { ...state.errors, [action.payload.leagueId]: action.payload.error },
       };
     case 'TOGGLE_BADGE':
       return {
         ...state,
-        seasonBadges: { 
-          ...state.seasonBadges, 
-          [action.payload]: state.seasonBadges[action.payload] ? null : state.seasonBadges[action.payload] 
-        }
+        seasonBadges: {
+          ...state.seasonBadges,
+          [action.payload]: state.seasonBadges[action.payload]
+            ? null
+            : state.seasonBadges[action.payload],
+        },
       };
     default:
       return state;
@@ -57,7 +59,7 @@ interface SeasonContextType {
   dispatch: React.Dispatch<SeasonAction>;
   fetchSeasonBadge: (leagueId: string) => Promise<void>;
   toggleBadge: (leagueId: string) => void;
-  getBadgeStatus: (leagueId: string) => { 
+  getBadgeStatus: (leagueId: string) => {
     badgeUrl: string | null;
     loading: boolean;
     error: string | null;
@@ -77,46 +79,46 @@ export const SeasonProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
 
     dispatch({ type: 'FETCH_BADGE_START', payload: leagueId });
-    
+
     try {
       const data = await sportsService.getLeagueSeasons(leagueId);
-      
+
       if (data.seasons && data.seasons.length > 0) {
-        const seasonWithBadge = data.seasons.find(season => season.strBadge);
-        
+        const seasonWithBadge = data.seasons.find((season) => season.strBadge);
+
         if (seasonWithBadge) {
-          dispatch({ 
-            type: 'FETCH_BADGE_SUCCESS', 
-            payload: { 
-              leagueId, 
-              badgeUrl: seasonWithBadge.strBadge 
-            } 
+          dispatch({
+            type: 'FETCH_BADGE_SUCCESS',
+            payload: {
+              leagueId,
+              badgeUrl: seasonWithBadge.strBadge,
+            },
           });
         } else {
-          dispatch({ 
-            type: 'FETCH_BADGE_ERROR', 
-            payload: { 
-              leagueId, 
-              error: 'No season badge found' 
-            } 
+          dispatch({
+            type: 'FETCH_BADGE_ERROR',
+            payload: {
+              leagueId,
+              error: 'No season badge found',
+            },
           });
         }
       } else {
-        dispatch({ 
-          type: 'FETCH_BADGE_ERROR', 
-          payload: { 
-            leagueId, 
-            error: 'No seasons found' 
-          } 
+        dispatch({
+          type: 'FETCH_BADGE_ERROR',
+          payload: {
+            leagueId,
+            error: 'No seasons found',
+          },
         });
       }
     } catch (err) {
-      dispatch({ 
-        type: 'FETCH_BADGE_ERROR', 
-        payload: { 
-          leagueId, 
-          error: err instanceof Error ? err.message : 'An error occurred' 
-        } 
+      dispatch({
+        type: 'FETCH_BADGE_ERROR',
+        payload: {
+          leagueId,
+          error: err instanceof Error ? err.message : 'An error occurred',
+        },
       });
     }
   };
@@ -131,18 +133,20 @@ export const SeasonProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return {
       badgeUrl: state.seasonBadges[leagueId] || null,
       loading: state.loading[leagueId] || false,
-      error: state.errors[leagueId] || null
+      error: state.errors[leagueId] || null,
     };
   };
 
   return (
-    <SeasonContext.Provider value={{ 
-      state, 
-      dispatch, 
-      fetchSeasonBadge,
-      toggleBadge,
-      getBadgeStatus
-    }}>
+    <SeasonContext.Provider
+      value={{
+        state,
+        dispatch,
+        fetchSeasonBadge,
+        toggleBadge,
+        getBadgeStatus,
+      }}
+    >
       {children}
     </SeasonContext.Provider>
   );

@@ -1,6 +1,6 @@
-import { LeaguesPage } from './pages/LeaguesPage'
-import { LeaguesProvider } from './store/LeaguesContext'
-import { SeasonProvider } from './store/SeasonContext'
+import { LeaguesPage } from './pages/LeaguesPage';
+import { LeaguesProvider } from './store/LeaguesContext';
+import { SeasonProvider } from './store/SeasonContext';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         </div>
       </SeasonProvider>
     </LeaguesProvider>
-  )
+  );
 }
 
-export default App
+export default App;

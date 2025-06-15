@@ -11,7 +11,7 @@ interface LeaguesState {
   searchTerm: string;
 }
 
-type LeaguesAction = 
+type LeaguesAction =
   | { type: 'FETCH_START' }
   | { type: 'FETCH_SUCCESS'; payload: League[] }
   | { type: 'FETCH_ERROR'; payload: Error }
@@ -63,9 +63,9 @@ export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children })
       const response = await sportsService.getAllLeagues();
       dispatch({ type: 'FETCH_SUCCESS', payload: response.leagues });
     } catch (err) {
-      dispatch({ 
-        type: 'FETCH_ERROR', 
-        payload: err instanceof Error ? err : new Error('Failed to fetch leagues') 
+      dispatch({
+        type: 'FETCH_ERROR',
+        payload: err instanceof Error ? err : new Error('Failed to fetch leagues'),
       });
     }
   }, []);
@@ -73,19 +73,17 @@ export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Memoize getFilteredLeagues to prevent infinite updates
   const getFilteredLeagues = useCallback(() => {
     let filtered = [...state.leagues];
-    
+
     if (state.selectedSport !== 'all') {
-      filtered = filtered.filter(league => 
-        league.strSport === state.selectedSport
-      );
+      filtered = filtered.filter((league) => league.strSport === state.selectedSport);
     }
-    
+
     if (state.searchTerm) {
-      filtered = filtered.filter(league =>
+      filtered = filtered.filter((league) =>
         league.strLeague.toLowerCase().includes(state.searchTerm.toLowerCase())
       );
     }
-    
+
     return filtered;
   }, [state.leagues, state.selectedSport, state.searchTerm]);
 
@@ -95,13 +93,15 @@ export const LeaguesProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [state.leagues]);
 
   return (
-    <LeaguesContext.Provider value={{ 
-      state, 
-      dispatch, 
-      fetchLeagues, 
-      getFilteredLeagues,
-      getSportTypes
-    }}>
+    <LeaguesContext.Provider
+      value={{
+        state,
+        dispatch,
+        fetchLeagues,
+        getFilteredLeagues,
+        getSportTypes,
+      }}
+    >
       {children}
     </LeaguesContext.Provider>
   );

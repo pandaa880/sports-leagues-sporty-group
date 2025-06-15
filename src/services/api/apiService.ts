@@ -8,12 +8,12 @@ export class ApiService {
   async get<T>(endpoint: string): Promise<T> {
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
-      return await response.json() as T;
+
+      return (await response.json()) as T;
     } catch (error) {
       console.error('API request failed:', error);
       throw error;
@@ -29,12 +29,12 @@ export class ApiService {
         },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
-      return await response.json() as T;
+
+      return (await response.json()) as T;
     } catch (error) {
       console.error('API request failed:', error);
       throw error;

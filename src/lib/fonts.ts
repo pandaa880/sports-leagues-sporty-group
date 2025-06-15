@@ -4,10 +4,10 @@
 export const fontVariables = {
   inter: '--font-inter',
   poppins: '--font-poppins',
-}
+};
 
 // Font family definitions for Tailwind
 export const fontFamily = {
   inter: ['var(--font-inter)', 'sans-serif'],
   poppins: ['var(--font-poppins)', 'sans-serif'],
-}
+};

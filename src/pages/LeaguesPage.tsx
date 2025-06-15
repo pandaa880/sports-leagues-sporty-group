@@ -1,17 +1,17 @@
-import { Input } from "@/components/ui/input";
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { H1, P } from "@/components/ui/typography";
+} from '@/components/ui/select';
+import { H1, P } from '@/components/ui/typography';
 import { LeaguesList } from '../components/LeaguesList';
-import { useLeaguesContext } from "../store/LeaguesContext";
-import { Button } from "@/components/ui/button";
+import { useLeaguesContext } from '../store/LeaguesContext';
+import { Button } from '@/components/ui/button';
 
-import { clearAllCaches } from "../utils/cacheUtils";
+import { clearAllCaches } from '../utils/cacheUtils';
 
 export const LeaguesPage = () => {
   const { state, dispatch, getSportTypes } = useLeaguesContext();
@@ -29,10 +29,7 @@ export const LeaguesPage = () => {
       <div className="mb-6">
         <div className="mb-6 flex justify-between items-center mb-6">
           <H1>All Leagues</H1>
-          <Button
-            variant="outline"
-            onClick={clearAllCaches}
-          >
+          <Button variant="outline" onClick={clearAllCaches}>
             Clear Cache
           </Button>
         </div>
@@ -89,12 +86,10 @@ export const LeaguesPage = () => {
         <div className="mb-8">
           <LeaguesList />
         </div>
-      {/**
-       * improvement - pagination        
-       */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {/* Placeholder for pagination */}
-        </div>
+        {/**
+         * improvement - pagination
+         */}
+        <div className="flex justify-center mt-8 space-x-2">{/* Placeholder for pagination */}</div>
       </div>
     </div>
   );
