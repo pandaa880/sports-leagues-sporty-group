@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { sportsService } from '../services/api/sportsService';
-import type { League } from '../types/api';
+import type { League } from '../types/sportsService';
 
 interface UseLeaguesResult {
   leagues: League[];

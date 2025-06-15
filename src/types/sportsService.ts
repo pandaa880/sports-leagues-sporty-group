@@ -8,3 +8,12 @@ export interface League {
 export interface LeaguesResponse {
   leagues: League[];
 }
+
+export interface Season {
+  strBadge: string;
+  strSeason: string;
+}
+
+export interface SeasonsResponse {
+  seasons: Season[];
+}
