@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
-import { useLeagues } from '../hooks/useLeagues';
+import { useLeaguesContext } from '../store/LeaguesContext';
 import { useDebounce } from '../hooks/useDebounce';
 
 import { Dropdown, type DropdownOption } from './ui/dropdown';
@@ -23,27 +23,26 @@ const getDropdownOptions = (leagues: League[]): DropdownOption[] => {
 }
 
 export const LeaguesList = () => {
-    const { leagues, loading, error, refetch } = useLeagues();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedSport, setSelectedSport] = useState('all');
-
+    const { state, dispatch, fetchLeagues, getFilteredLeagues } = useLeaguesContext();
+    const { leagues, loading, error, searchTerm, selectedSport } = state;
+    
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
+    
+    useEffect(() => {
+        fetchLeagues();
+    }, []);
+    
+    const handleSearchChange = (value: string) => {
+        dispatch({ type: 'SET_SEARCH_TERM', payload: value });
+    };
+    
+    const handleSportChange = (value: string) => {
+        dispatch({ type: 'SET_SELECTED_SPORT', payload: value });
+        dispatch({ type: 'SET_SEARCH_TERM', payload: '' });
+    };
+    
     const filteredLeagues = useMemo(() => {
-        let filtered = [...leagues];
-        
-        if (selectedSport !== 'all') {
-            filtered = filtered.filter(league => 
-                league.strSport === selectedSport
-            );
-        }
-        
-        if (debouncedSearchTerm) {
-            filtered = filtered.filter(league =>
-                league.strLeague.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-            );
-        }
-        
-        return filtered;
+        return getFilteredLeagues();
     }, [leagues, selectedSport, debouncedSearchTerm]);
 
 
@@ -58,7 +57,7 @@ export const LeaguesList = () => {
         return (
             <div className="error">
                 <p>Error loading leagues: {error.message}</p>
-                <button onClick={refetch}>Try Again</button>
+                <button onClick={fetchLeagues}>Try Again</button>
             </div>
         );
     }
@@ -71,7 +70,7 @@ export const LeaguesList = () => {
                     type="text"
                     placeholder="Search leagues..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                     className="search-input"
                 />
             </div>
@@ -79,10 +78,7 @@ export const LeaguesList = () => {
                 <Dropdown
                     options={sportOptions}
                     value={selectedSport}
-                    onChange={(value: string) => {
-                        setSelectedSport(value);
-                        setSearchTerm('');
-                    }}
+                    onChange={handleSportChange}
                     placeholder="Filter by sport"
                     className="sport-dropdown"
                 />
