@@ -7,7 +7,6 @@ const PRE_CACHED_RESOURCES = [
   '/',
   '/index.html',
   '/main.js',
-  '/style.css'
 ];
 
 // Install event - pre-cache important resources
@@ -40,6 +39,14 @@ self.addEventListener('activate', (event) => {
 // Helper function to determine if a request is for an image
 function isImageRequest(request) {
   const url = new URL(request.url);
+  
+  // Check if it's a TheSportsDB image
+  const isTheSportsDBImage = 
+    url.hostname === 'www.thesportsdb.com' && 
+    (
+      url.pathname.includes('/images/media/league/badgearchive/')
+    );
+  
   return (
     request.destination === 'image' || 
     url.pathname.endsWith('.jpg') || 
@@ -47,8 +54,8 @@ function isImageRequest(request) {
     url.pathname.endsWith('.png') || 
     url.pathname.endsWith('.gif') ||
     url.pathname.endsWith('.svg') ||
-    // TheSportsDB specific image paths
-    url.pathname.includes('/badge/')
+    url.pathname.endsWith('.webp') ||
+    isTheSportsDBImage
   );
 }
 
@@ -79,12 +86,21 @@ self.addEventListener('fetch', (event) => {
           }
 
           // Otherwise fetch from network
-          return fetch(request).then((networkResponse) => {
-            // Cache a copy of the response
-            if (networkResponse.ok) {
-              cache.put(request, networkResponse.clone());
+          
+          // Use no-cors for TheSportsDB images to handle CORS issues
+          const fetchOptions = request.url.includes('thesportsdb.com') ? 
+            { mode: 'no-cors' } : {};
+          
+          return fetch(request, fetchOptions).then((networkResponse) => {
+            // Cache a copy of the response (both ok and opaque responses)
+            if (networkResponse.ok || networkResponse.type === 'opaque') {
+              cache.put(request, networkResponse.clone())
+                .catch(err => console.error('Failed to cache:', request.url, err));
             }
+            
             return networkResponse;
+          }).catch(error => {
+            return new Response('Image not available', { status: 404 });
           });
         });
       })
