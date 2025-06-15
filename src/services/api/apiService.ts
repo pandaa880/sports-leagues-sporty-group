@@ -1,5 +1,5 @@
 export class ApiService {
-  private readonly baseUrl: string;
+  protected readonly baseUrl: string;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
