@@ -5,15 +5,14 @@ import { useDebounce } from '../hooks/useDebounce';
 
 import { Dropdown, type DropdownOption } from './ui/dropdown';
 
-import type { League } from '../types/api'
+import type { League } from '../types/sportsService'
 
 import './LeaguesList.css';
+import { LeagueCard } from './league-card/LeagueCard';
 
 const getDropdownOptions = (leagues: League[]): DropdownOption[] => {
-// Get unique sports
   const uniqueSports = Array.from(new Set(leagues.map(league => league.strSport)));
   
-  // Create dropdown options with "All" option first
   return [
     { value: 'all', label: 'All Sports' },
     ...uniqueSports.map(sport => ({
@@ -32,14 +31,12 @@ export const LeaguesList = () => {
     const filteredLeagues = useMemo(() => {
         let filtered = [...leagues];
         
-        // First filter by sport if not set to "all"
         if (selectedSport !== 'all') {
             filtered = filtered.filter(league => 
                 league.strSport === selectedSport
             );
         }
         
-        // Then filter by search term if one exists
         if (debouncedSearchTerm) {
             filtered = filtered.filter(league =>
                 league.strLeague.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -84,7 +81,7 @@ export const LeaguesList = () => {
                     value={selectedSport}
                     onChange={(value: string) => {
                         setSelectedSport(value);
-                        setSearchTerm(''); // Reset search when changing sport
+                        setSearchTerm('');
                     }}
                     placeholder="Filter by sport"
                     className="sport-dropdown"
@@ -93,13 +90,7 @@ export const LeaguesList = () => {
             <div className="leagues-grid">
                 {filteredLeagues.length > 0 ? (
                     filteredLeagues.map((league) => (
-                        <div key={league.idLeague} className="league-card">
-                            <h3>{league.strLeague}</h3>
-                            <p>Sport: {league.strSport}</p>
-                            {league.strLeagueAlternate && (
-                                <p>Also known as: {league.strLeagueAlternate}</p>
-                            )}
-                        </div>
+                        <LeagueCard key={league.idLeague} league={league} />
                     ))
                 ) : (
                     <p className="no-results">No leagues found matching "{searchTerm}"</p>
