@@ -48,6 +48,11 @@ const seasonReducer = (state: SeasonState, action: SeasonAction): SeasonState =>
             ? null
             : state.seasonBadges[action.payload],
         },
+        // Clear any errors when toggling
+        errors: {
+          ...state.errors,
+          [action.payload]: null,
+        },
       };
     default:
       return state;
