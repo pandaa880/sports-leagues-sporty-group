@@ -3,7 +3,7 @@ const CACHE_NAME = 'sports-league-cache-v1';
 const IMAGE_CACHE_NAME = 'sports-league-images-v1';
 
 // Resources to pre-cache
-const PRE_CACHED_RESOURCES = ['/', '/index.html', '/main.js'];
+const PRE_CACHED_RESOURCES = ['/', '/index.html'];
 
 // Install event - pre-cache important resources
 self.addEventListener('install', (event) => {
