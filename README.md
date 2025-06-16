@@ -157,6 +157,24 @@ Future development will include end-to-end (E2E) tests using Cypress or Playwrig
 - **Test Coverage Reports**: Generate and monitor test coverage reports
 - **CI/CD Integration**: Set up automated testing in CI/CD pipelines
 
+## Deployment
+
+The application is deployed using Netlify's continuous deployment pipeline:
+
+### Deployment Process
+
+- **Hosting**: The application is hosted on Netlify at [https://phenomenal-cassata-b2a3f3.netlify.app/](https://phenomenal-cassata-b2a3f3.netlify.app/)
+- **Continuous Deployment**: Automatic deployments are triggered when changes are merged to the `main` branch
+- **Build Process**: Netlify automatically runs the build process defined in the project configuration
+
+### Deployment Steps
+
+1. Make changes to the codebase
+2. Create a pull request to the `main` branch
+3. Review and approve the pull request
+4. Merge the pull request to trigger automatic deployment
+5. Netlify builds and deploys the application to production
+
 ### API Caching Strategy
 
 The application implements a sophisticated multi-level caching strategy using the Cache Storage API and Service Workers:
