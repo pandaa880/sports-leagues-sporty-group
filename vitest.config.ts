@@ -11,6 +11,17 @@ export default defineConfig({
     include: ['**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/**',
+        'dist/**',
+        'public/**',
+        '**/*.d.ts',
+        '**/*.test.{ts,tsx}',
+        '**/__tests__/**',
+        'src/test/**',
+        'vite.config.ts'
+      ],
     },
   },
   resolve: {

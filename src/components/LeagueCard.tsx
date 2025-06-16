@@ -9,9 +9,14 @@ export function LeagueCard({ league }: { league: League }) {
   const { badgeUrl, loading, error } = getBadgeStatus(league.idLeague);
 
   const handleCardClick = () => {
-    if (badgeUrl || error) {
+    if (error) {
+      // When there's an error, just toggle to clear it
+      toggleBadge(league.idLeague);
+    } else if (badgeUrl) {
+      // When there's a badge, toggle its visibility
       toggleBadge(league.idLeague);
     } else {
+      // When there's no badge or error, fetch the badge
       fetchSeasonBadge(league.idLeague);
     }
   };
@@ -23,10 +28,12 @@ export function LeagueCard({ league }: { league: League }) {
       className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
       onClick={handleCardClick}
     >
-      {badgeUrl ? (
+      {error ? (
         <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
-          {error && <p className="text-sm text-red-500">{error}</p>}
-
+          <p className="text-sm text-red-500">{error}</p>
+        </CardHeader>
+      ) : badgeUrl ? (
+        <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
           {loading ? (
             <div className="flex flex-col items-center justify-center w-full h-24">
               <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-2"></div>
