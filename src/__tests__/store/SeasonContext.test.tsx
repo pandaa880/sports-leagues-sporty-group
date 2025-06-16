@@ -8,8 +8,8 @@ import { sportsService } from '../../services/api/sportsService';
 // Mock the API service
 vi.mock('../../services/api/sportsService', () => ({
   sportsService: {
-    getLeagueSeasons: vi.fn()
-  }
+    getLeagueSeasons: vi.fn(),
+  },
 }));
 
 describe('SeasonContext', () => {
@@ -17,12 +17,12 @@ describe('SeasonContext', () => {
   const mockSeasons: Season[] = [
     {
       strSeason: '2023-2024',
-      strBadge: 'https://example.com/badge.png'
+      strBadge: 'https://example.com/badge.png',
     },
     {
       strSeason: '2022-2023',
-      strBadge: 'https://example.com/old-badge.png'
-    }
+      strBadge: 'https://example.com/old-badge.png',
+    },
   ];
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('SeasonContext', () => {
     expect(result.current.state).toEqual({
       seasonBadges: {},
       loading: {},
-      errors: {}
+      errors: {},
     });
   });
 
@@ -103,7 +103,7 @@ describe('SeasonContext', () => {
   it('handles seasons without badges', async () => {
     const seasonsWithoutBadges = [
       { strSeason: '2023-2024', strBadge: '' },
-      { strSeason: '2022-2023', strBadge: null }
+      { strSeason: '2022-2023', strBadge: null },
     ];
     (sportsService.getLeagueSeasons as any).mockResolvedValue({ seasons: seasonsWithoutBadges });
 
@@ -164,7 +164,7 @@ describe('SeasonContext', () => {
     expect(status).toEqual({
       badgeUrl: null,
       loading: false,
-      error: null
+      error: null,
     });
 
     // Start fetching
@@ -176,14 +176,14 @@ describe('SeasonContext', () => {
     expect(status).toEqual({
       badgeUrl: null,
       loading: true,
-      error: null
+      error: null,
     });
 
     // Fetch success
     act(() => {
       result.current.dispatch({
         type: 'FETCH_BADGE_SUCCESS',
-        payload: { leagueId: mockLeagueId, badgeUrl: 'https://example.com/badge.png' }
+        payload: { leagueId: mockLeagueId, badgeUrl: 'https://example.com/badge.png' },
       });
     });
 
@@ -191,7 +191,7 @@ describe('SeasonContext', () => {
     expect(status).toEqual({
       badgeUrl: 'https://example.com/badge.png',
       loading: false,
-      error: null
+      error: null,
     });
   });
 

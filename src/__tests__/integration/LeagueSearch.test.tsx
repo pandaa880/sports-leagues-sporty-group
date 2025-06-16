@@ -9,8 +9,8 @@ import { sportsService } from '../../services/api/sportsService';
 vi.mock('../../services/api/sportsService', () => ({
   sportsService: {
     getAllLeagues: vi.fn(),
-    getLeagueSeasons: vi.fn()
-  }
+    getLeagueSeasons: vi.fn(),
+  },
 }));
 
 describe('League Search Integration', () => {
@@ -19,27 +19,27 @@ describe('League Search Integration', () => {
       idLeague: '4328',
       strLeague: 'English Premier League',
       strSport: 'Soccer',
-      strLeagueAlternate: 'EPL'
+      strLeagueAlternate: 'EPL',
     },
     {
       idLeague: '4329',
       strLeague: 'La Liga',
       strSport: 'Soccer',
-      strLeagueAlternate: 'Spanish League'
+      strLeagueAlternate: 'Spanish League',
     },
     {
       idLeague: '4330',
       strLeague: 'NBA',
       strSport: 'Basketball',
-      strLeagueAlternate: 'National Basketball Association'
-    }
+      strLeagueAlternate: 'National Basketball Association',
+    },
   ];
 
   beforeEach(() => {
     vi.clearAllMocks();
     (sportsService.getAllLeagues as any).mockResolvedValue({ leagues: mockLeagues });
     (sportsService.getLeagueSeasons as any).mockResolvedValue({
-      seasons: [{ strSeason: '2023-2024', strBadge: 'https://example.com/badge.png' }]
+      seasons: [{ strSeason: '2023-2024', strBadge: 'https://example.com/badge.png' }],
     });
   });
 
@@ -59,10 +59,10 @@ describe('League Search Integration', () => {
 
     // Find the search input
     const searchInput = screen.getByPlaceholderText(/search/i);
-    
+
     // Type "premier" in the search box
     fireEvent.change(searchInput, { target: { value: 'premier' } });
-    
+
     // Wait for debounce
     await waitFor(() => {
       // Should show Premier League but not La Liga
@@ -85,13 +85,13 @@ describe('League Search Integration', () => {
     await waitFor(() => {
       expect(screen.getByText('English Premier League')).toBeInTheDocument();
     });
-    
+
     // For now, we'll skip the actual filtering test since it requires complex UI interactions
     // In a real-world scenario, we would either:
     // 1. Mock the UI components to make them more testable
     // 2. Use a component testing library that better supports custom UI components
     // 3. Test the filtering logic at a lower level (unit test the context directly)
-    
+
     // This test is marked as skipped until we can implement a more reliable approach
   });
 });

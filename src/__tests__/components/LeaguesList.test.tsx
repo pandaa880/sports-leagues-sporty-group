@@ -7,20 +7,18 @@ import type { League } from '../../types/sportsService';
 
 // Mock the context hook
 vi.mock('../../store/LeaguesContext', () => ({
-  useLeaguesContext: vi.fn()
+  useLeaguesContext: vi.fn(),
 }));
 
 // Mock the child components
 vi.mock('../../components/LeagueCard', () => ({
   LeagueCard: ({ league }: { league: League }) => (
-    <div data-testid={`league-card-${league.idLeague}`}>
-      {league.strLeague}
-    </div>
-  )
+    <div data-testid={`league-card-${league.idLeague}`}>{league.strLeague}</div>
+  ),
 }));
 
 vi.mock('../../components/LeagueCardSkeleton', () => ({
-  LeagueCardSkeleton: () => <div data-testid="league-card-skeleton" />
+  LeagueCardSkeleton: () => <div data-testid="league-card-skeleton" />,
 }));
 
 describe('LeaguesList', () => {
@@ -29,14 +27,14 @@ describe('LeaguesList', () => {
       idLeague: '4328',
       strLeague: 'English Premier League',
       strSport: 'Soccer',
-      strLeagueAlternate: 'EPL'
+      strLeagueAlternate: 'EPL',
     },
     {
       idLeague: '4329',
       strLeague: 'La Liga',
       strSport: 'Soccer',
-      strLeagueAlternate: 'Spanish League'
-    }
+      strLeagueAlternate: 'Spanish League',
+    },
   ];
 
   const mockContextValue = {
@@ -44,10 +42,10 @@ describe('LeaguesList', () => {
       loading: false,
       error: null,
       leagues: mockLeagues,
-      filters: { sport: '', search: '' }
+      filters: { sport: '', search: '' },
     },
     fetchLeagues: vi.fn(),
-    getFilteredLeagues: vi.fn().mockReturnValue(mockLeagues)
+    getFilteredLeagues: vi.fn().mockReturnValue(mockLeagues),
   };
 
   beforeEach(() => {
@@ -62,7 +60,7 @@ describe('LeaguesList', () => {
 
   it('renders league cards when leagues are loaded', () => {
     render(<LeaguesList />);
-    
+
     // Check that both league cards are rendered
     expect(screen.getByTestId('league-card-4328')).toBeInTheDocument();
     expect(screen.getByTestId('league-card-4329')).toBeInTheDocument();
@@ -76,12 +74,12 @@ describe('LeaguesList', () => {
       ...mockContextValue,
       state: {
         ...mockContextValue.state,
-        loading: true
-      }
+        loading: true,
+      },
     });
-    
+
     render(<LeaguesList />);
-    
+
     // Check that skeletons are rendered (10 of them as per the component)
     const skeletons = screen.getAllByTestId('league-card-skeleton');
     expect(skeletons.length).toBe(10);
@@ -89,19 +87,19 @@ describe('LeaguesList', () => {
 
   it('renders error message when there is an error', () => {
     const errorMessage = 'Failed to load leagues';
-    
+
     // Update mock to return error state
     (useLeaguesContext as any).mockReturnValue({
       ...mockContextValue,
       state: {
         ...mockContextValue.state,
         loading: false,
-        error: { message: errorMessage }
-      }
+        error: { message: errorMessage },
+      },
     });
-    
+
     render(<LeaguesList />);
-    
+
     // Check that the error message is displayed
     expect(screen.getByText('Error loading leagues')).toBeInTheDocument();
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
@@ -109,23 +107,23 @@ describe('LeaguesList', () => {
 
   it('retries fetching leagues when retry button is clicked', () => {
     const errorMessage = 'Failed to load leagues';
-    
+
     // Update mock to return error state
     (useLeaguesContext as any).mockReturnValue({
       ...mockContextValue,
       state: {
         ...mockContextValue.state,
         loading: false,
-        error: { message: errorMessage }
-      }
+        error: { message: errorMessage },
+      },
     });
-    
+
     render(<LeaguesList />);
-    
+
     // Click the retry button
     const retryButton = screen.getByText('Retry');
     fireEvent.click(retryButton);
-    
+
     // Check that fetchLeagues was called again
     expect(mockContextValue.fetchLeagues).toHaveBeenCalledTimes(2);
   });
@@ -134,11 +132,11 @@ describe('LeaguesList', () => {
     // Update mock to return empty filtered leagues
     (useLeaguesContext as any).mockReturnValue({
       ...mockContextValue,
-      getFilteredLeagues: vi.fn().mockReturnValue([])
+      getFilteredLeagues: vi.fn().mockReturnValue([]),
     });
-    
+
     render(<LeaguesList />);
-    
+
     // Check that the no leagues message is displayed
     expect(screen.getByText('No leagues found matching your criteria')).toBeInTheDocument();
   });

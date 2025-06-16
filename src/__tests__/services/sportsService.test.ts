@@ -4,7 +4,7 @@ import { CachedApiService } from '../../services/api/cachedApiService';
 
 // Mock the CachedApiService
 vi.mock('../../services/api/cachedApiService', () => ({
-  CachedApiService: vi.fn()
+  CachedApiService: vi.fn(),
 }));
 
 describe('SportsService', () => {
@@ -14,7 +14,7 @@ describe('SportsService', () => {
   beforeEach(() => {
     mockGet = vi.fn();
     (CachedApiService as any).mockImplementation(() => ({
-      get: mockGet
+      get: mockGet,
     }));
     sportsService = new SportsService();
   });

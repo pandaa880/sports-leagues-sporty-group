@@ -26,7 +26,7 @@ export function LeagueCard({ league }: { league: League }) {
       {badgeUrl ? (
         <CardHeader className="p-4 flex items-center justify-center h-30 bg-gray-50">
           {error && <p className="text-sm text-red-500">{error}</p>}
-          
+
           {loading ? (
             <div className="flex flex-col items-center justify-center w-full h-24">
               <div className="w-20 h-20 rounded-full bg-gray-200 animate-pulse mb-2"></div>

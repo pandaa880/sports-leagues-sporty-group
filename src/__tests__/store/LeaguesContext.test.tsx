@@ -8,8 +8,8 @@ import { LeaguesProvider, useLeaguesContext } from '../../store/LeaguesContext';
 // Mock the API service
 vi.mock('../../services/api/sportsService', () => ({
   sportsService: {
-    getAllLeagues: vi.fn()
-  }
+    getAllLeagues: vi.fn(),
+  },
 }));
 
 describe('LeaguesContext', () => {
@@ -18,20 +18,20 @@ describe('LeaguesContext', () => {
       idLeague: '4328',
       strLeague: 'English Premier League',
       strSport: 'Soccer',
-      strLeagueAlternate: 'EPL'
+      strLeagueAlternate: 'EPL',
     },
     {
       idLeague: '4329',
       strLeague: 'La Liga',
       strSport: 'Soccer',
-      strLeagueAlternate: 'Spanish League'
+      strLeagueAlternate: 'Spanish League',
     },
     {
       idLeague: '4330',
       strLeague: 'NBA',
       strSport: 'Basketball',
-      strLeagueAlternate: 'National Basketball Association'
-    }
+      strLeagueAlternate: 'National Basketball Association',
+    },
   ];
 
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('LeaguesContext', () => {
       loading: false,
       error: null,
       selectedSport: 'all',
-      searchTerm: ''
+      searchTerm: '',
     });
   });
 

@@ -19,15 +19,15 @@ import { clearAllCaches } from '../lib/utils';
 export const LeaguesPage = () => {
   const { state, dispatch, getSportTypes } = useLeaguesContext();
   const { searchTerm, selectedSport } = state;
-  
+
   // Local state for input value before debouncing
   const [inputValue, setInputValue] = useState(searchTerm);
-  
+
   const debouncedSearchTerm = useDebounce(inputValue, 300);
-  
+
   // Get unique sport types from context
   const sportTypes = getSportTypes();
-  
+
   // Update the context state when the debounced value changes
   useEffect(() => {
     dispatch({ type: 'SET_SEARCH_TERM', payload: debouncedSearchTerm });

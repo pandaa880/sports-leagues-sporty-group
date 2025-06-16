@@ -6,7 +6,7 @@ import { useSeasonContext } from '../../store/SeasonContext';
 
 // Mock the context hook
 vi.mock('../../store/SeasonContext', () => ({
-  useSeasonContext: vi.fn()
+  useSeasonContext: vi.fn(),
 }));
 
 describe('LeagueCard', () => {
@@ -14,7 +14,7 @@ describe('LeagueCard', () => {
     idLeague: '4328',
     strLeague: 'English Premier League',
     strSport: 'Soccer',
-    strLeagueAlternate: 'EPL, Premier League'
+    strLeagueAlternate: 'EPL, Premier League',
   };
 
   const mockContextValue = {
@@ -23,8 +23,8 @@ describe('LeagueCard', () => {
     getBadgeStatus: vi.fn().mockReturnValue({
       badgeUrl: '',
       loading: false,
-      error: null
-    })
+      error: null,
+    }),
   };
 
   beforeEach(() => {
@@ -34,24 +34,24 @@ describe('LeagueCard', () => {
 
   it('renders league information correctly when no badge is loaded', () => {
     render(<LeagueCard league={mockLeague} />);
-    
+
     // Check that the league name is displayed
     expect(screen.getByText('English Premier League')).toBeInTheDocument();
-    
+
     // Check that the sport type is displayed
     expect(screen.getByText('Sport: Soccer')).toBeInTheDocument();
-    
+
     // Check that the alternate name is displayed
     expect(screen.getByText('Also known as: EPL, Premier League')).toBeInTheDocument();
   });
 
   it('fetches badge when card is clicked and no badge is loaded', () => {
     render(<LeagueCard league={mockLeague} />);
-    
+
     // Click on the card
     const card = screen.getByText('English Premier League').closest('.card, [class*="card"]');
     fireEvent.click(card!);
-    
+
     // Check that fetchSeasonBadge was called with the correct league ID
     expect(mockContextValue.fetchSeasonBadge).toHaveBeenCalledWith('4328');
     expect(mockContextValue.toggleBadge).not.toHaveBeenCalled();
@@ -62,20 +62,20 @@ describe('LeagueCard', () => {
     mockContextValue.getBadgeStatus.mockReturnValue({
       badgeUrl: 'https://example.com/badge.png',
       loading: false,
-      error: null
+      error: null,
     });
-    
+
     render(<LeagueCard league={mockLeague} />);
-    
+
     // Check that the image is rendered
     const image = screen.getByAltText('English Premier League badge');
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'https://example.com/badge.png');
-    
+
     // Click on the card
     const card = image.closest('.card, [class*="card"]');
     fireEvent.click(card!);
-    
+
     // Check that toggleBadge was called with the correct league ID
     expect(mockContextValue.toggleBadge).toHaveBeenCalledWith('4328');
     expect(mockContextValue.fetchSeasonBadge).not.toHaveBeenCalled();
@@ -86,11 +86,11 @@ describe('LeagueCard', () => {
     mockContextValue.getBadgeStatus.mockReturnValue({
       badgeUrl: '',
       loading: true,
-      error: null
+      error: null,
     });
-    
+
     render(<LeagueCard league={mockLeague} />);
-    
+
     // Check for loading animation elements
     const loadingElements = document.querySelectorAll('.animate-pulse');
     expect(loadingElements.length).toBeGreaterThan(0);
@@ -102,11 +102,11 @@ describe('LeagueCard', () => {
     mockContextValue.getBadgeStatus.mockReturnValue({
       badgeUrl: 'https://example.com/badge.png',
       loading: false,
-      error: 'Failed to load badge'
+      error: 'Failed to load badge',
     });
-    
+
     render(<LeagueCard league={mockLeague} />);
-    
+
     // Check that the error message is displayed
     expect(screen.getByText('Failed to load badge')).toBeInTheDocument();
   });
