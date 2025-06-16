@@ -87,6 +87,76 @@ This separation of concerns allows for better maintainability and scalability.
 - **React Context API**: For global state management
 - **useReducer**: For predictable state transitions
 
+### Testing
+- **Vitest**: For unit and integration testing with a Jest-compatible API
+- **React Testing Library**: For testing React components in a user-centric way
+- **MSW (Mock Service Worker)**: For mocking API requests in tests
+
+## Testing Strategy
+
+The project follows a comprehensive testing approach with multiple layers of tests to ensure reliability and maintainability:
+
+### Test Organization
+
+Tests are organized in a dedicated `__tests__` folder that mirrors the source structure:
+
+```
+__tests__/
+├── components/           # Component tests
+│   ├── LeagueCard.test.tsx
+│   ├── LeagueCardSkeleton.test.tsx
+│   └── LeaguesList.test.tsx
+├── hooks/                # Hook tests
+│   └── useDebounce.test.ts
+├── integration/          # Integration tests
+│   └── LeagueSearch.test.tsx
+└── services/             # Service tests
+    ├── cachedApiService.test.ts
+    └── sportsService.test.ts
+```
+
+### Testing Layers
+
+1. **Unit Tests**
+   - Test individual components, hooks, and utility functions in isolation
+   - Mock dependencies to focus on the unit being tested
+   - Verify component rendering, state changes, and event handling
+
+2. **Integration Tests**
+   - Test interactions between multiple components and contexts
+   - Verify search and filtering functionality across the application
+   - Test user interactions like typing in search fields and selecting filters
+
+3. **Service Tests**
+   - Test API services with mocked network responses
+   - Verify correct API endpoint usage and error handling
+   - Test caching behavior with mocked localStorage and fetch
+
+### Testing Best Practices
+
+- **Mocking Strategy**: Use Vitest for mocking external dependencies and context providers
+- **Accessibility Testing**: Ensure components are accessible by querying by role and accessible name
+- **Async Testing**: Use `waitFor` and async/await for testing asynchronous operations
+- **Test Isolation**: Reset mocks and clear caches between tests to prevent test pollution
+
+## Future Scope
+
+### End-to-End Testing
+
+Future development will include end-to-end (E2E) tests using Cypress or Playwright to test complete user flows:
+
+- **User Journeys**: Test complete user journeys from landing on the page to filtering and viewing league details
+- **Visual Regression**: Implement visual regression tests to catch UI changes
+- **Cross-browser Testing**: Ensure the application works consistently across different browsers
+- **Performance Testing**: Measure and monitor application performance metrics
+
+### Additional Enhancements
+
+- **Storybook Integration**: Add Storybook for component documentation and visual testing
+- **Automated Accessibility Audits**: Integrate tools like axe-core for automated accessibility testing
+- **Test Coverage Reports**: Generate and monitor test coverage reports
+- **CI/CD Integration**: Set up automated testing in CI/CD pipelines
+
 ### API Caching Strategy
 
 The application implements a sophisticated multi-level caching strategy using the Cache Storage API and Service Workers:
@@ -213,7 +283,7 @@ npm run build
 
 ## Technologies Used
 
-- React 18
+- React 19
 - TypeScript
 - Vite
 - Tailwind CSS
@@ -227,8 +297,9 @@ This project leveraged various AI tools to enhance development efficiency:
 - **Google Stitch** - Used to generate UI mockups and design concepts
 - **Cascade** - 
    - Helped with generating html & css for the UI from the mockup image
-   - Helped with migration of the UI component to shadcn-ui
    - Assisted with implementation of the caching layer
+   - Helped with migration of the UI component to shadcn-sui
+   - Helped with generating tests
 
 These AI tools significantly accelerated the development process while maintaining code quality and best practices.
 
