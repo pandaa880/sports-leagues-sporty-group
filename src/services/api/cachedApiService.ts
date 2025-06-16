@@ -18,7 +18,7 @@ export class CachedApiService extends ApiService {
    */
   async get<T>(endpoint: string, skipCache = false): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     // Skip cache if requested
     if (skipCache) {
       return this.fetchFromNetwork<T>(url);
@@ -35,11 +35,11 @@ export class CachedApiService extends ApiService {
           // Check if the cached response is still valid
           const cachedData = await cachedResponse.json();
           const cacheControl = cachedResponse.headers.get('x-cache-control');
-          
+
           if (cacheControl) {
             const cacheData = JSON.parse(cacheControl);
             const expirationTime = cacheData.timestamp;
-            
+
             // If cache is still valid, return it
             if (Date.now() < expirationTime) {
               return cachedData as T;
@@ -62,40 +62,43 @@ export class CachedApiService extends ApiService {
   private async fetchFromNetwork<T>(url: string): Promise<T> {
     try {
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const data = await response.json();
 
       // Cache the response if Cache API is available
       if ('caches' in window) {
         try {
           const cache = await caches.open(this.cacheName);
-          
+
           // Create a new response with custom headers for cache control
-          const expirationTime = Date.now() + (this.maxAge * 1000);
+          const expirationTime = Date.now() + this.maxAge * 1000;
           const headers = new Headers(response.headers);
-          
+
           // Store cache control info in a custom header
-          headers.set('x-cache-control', JSON.stringify({
-            timestamp: expirationTime,
-            maxAge: this.maxAge
-          }));
-          
+          headers.set(
+            'x-cache-control',
+            JSON.stringify({
+              timestamp: expirationTime,
+              maxAge: this.maxAge,
+            })
+          );
+
           const cachedResponse = new Response(JSON.stringify(data), {
             headers: headers,
             status: response.status,
-            statusText: response.statusText
+            statusText: response.statusText,
           });
-          
+
           await cache.put(url, cachedResponse);
         } catch (error) {
           console.error('Error writing to cache:', error);
         }
       }
-      
+
       return data as T;
     } catch (error) {
       console.error('API request failed:', error);

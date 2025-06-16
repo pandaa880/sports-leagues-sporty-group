@@ -3,7 +3,7 @@ import type { LeaguesResponse, SeasonsResponse } from '../../types/sportsService
 
 export class SportsService {
   private apiService: CachedApiService;
-  
+
   constructor() {
     // Use longer cache duration (1 hour) for sports data as it doesn't change frequently
     this.apiService = new CachedApiService(
@@ -23,4 +23,3 @@ export class SportsService {
 }
 
 export const sportsService = new SportsService();
-
